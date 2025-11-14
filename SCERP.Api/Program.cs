@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi;
+using Microsoft.OpenApi.Models;
+using SCERP.Identity;
 using SCERP.Infrastructure;
 using SCERP.Infrastructure.Data;
 
@@ -18,19 +19,50 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.WriteIndented = true;
     });
 
+builder.Services.AddOpenApi();
+
+// 添加Swagger服务
 builder.Services.AddEndpointsApiExplorer();
-
-
-// 配置Swagger
 builder.Services.AddSwaggerGen(c =>
 {
+    #region 配置XML注释路径
+    string xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, "SCERP.Api.xml");
+    c.IncludeXmlComments(xmlPath);
+    #endregion
+
+    #region 配置Swagger文档信息(接口分组或版本)
     c.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "SCERP API",
         Version = "v1",
-        Description = "SCERP API"
+        Description = "SCERP API Description"
+    });
+    #endregion
+
+    // 添加JWT认证到Swagger
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
     });
 
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
 });
 
 // 配置CORS
@@ -38,7 +70,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("SCERPAPP", policy =>
     {
-        policy.WithOrigins("https://localhost:7023", "http://localhost:5051") // 前端应用的地址
+        policy.WithOrigins("https://localhost:7122", "http://localhost:5122") // 前端应用的地址
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -54,10 +86,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "SCERP API V1");
+        c.SwaggerEndpoint($"/swagger/v1/swagger.json", "SCERP API V1");
         c.RoutePrefix = "swagger"; // 在/swagger访问Swagger UI
     });
-    #region
+    #region 数据库迁移
     // 开发环境下自动应用数据库迁移
     using (var scope = app.Services.CreateScope())
     {
@@ -107,10 +139,10 @@ if (app.Environment.IsDevelopment())
     }
     #endregion
 }
+app.UseHttpsRedirection();
 // 启用CORS（必须在UseAuthentication和UseAuthorization之前）
 app.UseCors("SCERPAPP");
 
-app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 

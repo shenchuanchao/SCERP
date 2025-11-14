@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using SCERP.Domain.DTOs;
 using SCERP.Domain.Models;
-using SCERP.Infrastructure.Data;
+using SCERP.Identity;
 
 namespace SCERP.Api.Controllers
 {

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
-namespace SCERP.Infrastructure.Data
+namespace SCERP.Identity
 {
     // 扩展ApplicationUser类（如果需要自定义用户属性）
     public class ApplicationUser : IdentityUser
@@ -15,8 +15,7 @@ namespace SCERP.Infrastructure.Data
         public DateTime? LastLoginAt { get; set; }
 
         // 导航属性
-
-
+      
 
     }
 }
