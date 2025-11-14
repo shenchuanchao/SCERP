@@ -13,11 +13,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SCERP.Core\SCERP.Core.csproj" />
+    <ProjectReference Include="..\SCERP.Domain\SCERP.Domain.csproj" />
     <ProjectReference Include="..\SCERP.Identity\SCERP.Identity.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

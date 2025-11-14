@@ -11,7 +11,7 @@ using SCERP.Identity;
 namespace SCERP.Api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -111,7 +111,7 @@ namespace SCERP.Api.Controllers
                     Token = new JwtSecurityTokenHandler().WriteToken(token),
                     Expiration = token.ValidTo,
                     user = new
-                    User
+                    ApplicationUser
                     {
                         Id = user.Id,
                         Email = user.Email,

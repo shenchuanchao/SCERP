@@ -10,7 +10,7 @@ namespace SCERP.Api.Controllers
     /// 用户控制器
     /// </summary>
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;

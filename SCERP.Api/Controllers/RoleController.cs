@@ -8,7 +8,7 @@ namespace SCERP.Api.Controllers
     /// 角色控制器
     /// </summary>
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class RoleController : ControllerBase
     {
         private readonly RoleManager<IdentityRole> _roleManager;

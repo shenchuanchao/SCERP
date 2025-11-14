@@ -89,7 +89,7 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint($"/swagger/v1/swagger.json", "SCERP API V1");
         c.RoutePrefix = "swagger"; // 在/swagger访问Swagger UI
     });
-    #region 数据库迁移
+#if DEBUG
     // 开发环境下自动应用数据库迁移
     using (var scope = app.Services.CreateScope())
     {
@@ -137,7 +137,7 @@ if (app.Environment.IsDevelopment())
             logger.LogError(ex, "数据库初始化过程中发生错误");
         }
     }
-    #endregion
+#endif
 }
 app.UseHttpsRedirection();
 // 启用CORS（必须在UseAuthentication和UseAuthorization之前）
@@ -150,14 +150,14 @@ app.MapControllers();
 
 app.Run();
 
-// 初始化角色和用户的辅助方法
+#region 初始化角色和用户的辅助方法
 async Task InitializeRolesAndUsers(IServiceProvider serviceProvider)
 {
     var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
     // 创建角色
-    string[] roleNames = { "Admin", "Customer", "Vendor" };
+    string[] roleNames = { "Admin", "Customer" };
     foreach (var roleName in roleNames)
     {
         var roleExist = await roleManager.RoleExistsAsync(roleName);
@@ -186,3 +186,4 @@ async Task InitializeRolesAndUsers(IServiceProvider serviceProvider)
         }
     }
 }
+#endregion

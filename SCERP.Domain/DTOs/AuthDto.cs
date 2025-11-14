@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using SCERP.Domain.Models;
+using SCERP.Identity;
 
 namespace SCERP.Domain.DTOs
 {
@@ -35,7 +36,7 @@ namespace SCERP.Domain.DTOs
     {
         public string Token { get; set; } = string.Empty;
         public DateTime Expiration { get; set; }
-        public User user { get; set; } = new();
+        public ApplicationUser user { get; set; } = new();
     }
 
 

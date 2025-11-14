@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SCERP.Core.Interfaces;
 using SCERP.Identity;
 using SCERP.Infrastructure.Data;
+using SCERP.Infrastructure.Services;
 
 namespace SCERP.Infrastructure
 {
@@ -42,10 +44,9 @@ namespace SCERP.Infrastructure
 
 
             // 注册业务服务
-            //services.AddScoped<IProductService, ProductService>();
-            //services.AddScoped<IOrderService, OrderService>();
-            //services.AddScoped<ICartService, CartService>();
-            //services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IMaterialTypeService, MaterialTypeService>();
+            services.AddScoped<IMaterialService, MaterialService>();
+            services.AddScoped<IPartnerService, PartnerService>();
 
             return services;
         }
