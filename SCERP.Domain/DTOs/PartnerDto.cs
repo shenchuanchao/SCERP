@@ -10,8 +10,8 @@ namespace SCERP.Domain.DTOs
 {
     public class CreatePartnerDto
     {
-        [Required(ErrorMessage = "编码不能为空")]
         [MaxLength(50, ErrorMessage = "编码长度不能超过50个字符")]
+        [Required(ErrorMessage = "编码不能为空")]
         public string EnCode { get; set; }
 
         [Required(ErrorMessage = "全称不能为空")]
