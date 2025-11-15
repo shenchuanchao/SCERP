@@ -118,7 +118,7 @@ namespace SCERP.Domain.Models
         /// 结算方式
         /// </summary>
         [MaxLength(50)]
-        public string? SettlementMethod { get; set; }
+        public SettlementMethods SettlementMethod { get; set; }= SettlementMethods.Cash;
 
         /// <summary>
         /// 交货方式

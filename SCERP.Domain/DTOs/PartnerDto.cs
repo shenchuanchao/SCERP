@@ -61,8 +61,7 @@ namespace SCERP.Domain.DTOs
         [MaxLength(20, ErrorMessage = "结算币名长度不能超过20个字符")]
         public string SettlementCurrency { get; set; } = "RMB";
 
-        [MaxLength(50, ErrorMessage = "结算方式长度不能超过50个字符")]
-        public string SettlementMethod { get; set; }
+        public SettlementMethods SettlementMethod { get; set; }= SettlementMethods.Cash;
 
         [MaxLength(50, ErrorMessage = "交货方式长度不能超过50个字符")]
         public string? DeliveryMethod { get; set; }
@@ -98,7 +97,7 @@ namespace SCERP.Domain.DTOs
         public decimal TaxRate { get; set; }
         public bool IsPlainInvoice { get; set; }
         public string SettlementCurrency { get; set; } = "RMB";
-        public string? SettlementMethod { get; set; }
+        public SettlementMethods SettlementMethod { get; set; }
         public string? DeliveryMethod { get; set; }
         public string? DeliveryAddress { get; set; }
         public string? Category { get; set; }

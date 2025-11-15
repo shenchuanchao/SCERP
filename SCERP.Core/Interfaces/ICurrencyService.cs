@@ -11,10 +11,26 @@ namespace SCERP.Core.Interfaces
 {
     public interface ICurrencyService
     {
-        Task<Currency> CreateCurrencyAsync(RequestCurrencyDto dto);
-        Task<Currency> GetCurrencyByIdAsync(string id);
         Task<List<Currency>> GetCurrencysAsync();
-        Task<Currency> UpdateCurrencyAsync(int id, RequestCurrencyDto dto);
-        Task<bool> DeleteCurrencyAsync(int id);
+        Task<Currency> GetCurrencyByIdAsync(string id);
+        Task CreateCurrencyAsync(RequestCurrencyDto dto);
+        Task<bool> UpdateCurrencyAsync(string id, RequestCurrencyDto dto);
+        Task<bool> DeleteCurrencyAsync(string id);
+
+        /// <summary>
+        /// 添加日志记录
+        /// </summary>
+        /// <param name="currencyId"></param>
+        /// <param name="operation"></param>
+        /// <param name="performedBy"></param>
+        /// <returns></returns>
+        Task LogCurrencyAsync(string currencyId, string operation, string performedBy);
+        /// <summary>
+        /// 获取日志记录
+        /// </summary>
+        /// <param name="currencyId"></param>
+        /// <returns></returns>
+        Task<List<CurrencyLog>> GetCurrencyLogsAsync(string currencyId);
+
     }
 }

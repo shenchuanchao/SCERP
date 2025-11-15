@@ -9,10 +9,12 @@ namespace SCERP.Domain.DTOs
 {
     public class RequestCurrencyDto
     {
-        [Required(ErrorMessage = "编码不能为空")]
-        [MaxLength(10,ErrorMessage = "编码长度不能超过10个字符")]
+        [Required(ErrorMessage = "币名编码不能为空")]
+        [MaxLength(3, ErrorMessage = "币名编码长度不能超过3个字符")]
         public string EnCode { get; set; }
-        public string? FullName { get; set; }
+
+        [MaxLength(3, ErrorMessage = "币名符号长度不能超过3个字符")]
+        public string Symbol { get; set; }
         public decimal ExchangeRate { get; set; } = 1;
     }
 }

@@ -16,6 +16,7 @@ namespace SCERP.Infrastructure.Data
 
         #region 系统数据表
         public DbSet<Currency> Currencies { get; set; }
+        public DbSet<CurrencyLog> CurrencyLogs { get; set; }
 
         #endregion
 

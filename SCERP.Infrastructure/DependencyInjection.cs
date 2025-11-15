@@ -47,6 +47,7 @@ namespace SCERP.Infrastructure
             services.AddScoped<IMaterialTypeService, MaterialTypeService>();
             services.AddScoped<IMaterialService, MaterialService>();
             services.AddScoped<IPartnerService, PartnerService>();
+            services.AddScoped<ICurrencyService, CurrencyService>();
 
             return services;
         }

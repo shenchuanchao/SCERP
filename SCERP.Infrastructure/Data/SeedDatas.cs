@@ -18,8 +18,9 @@ namespace SCERP.Infrastructure.Data
         {
             //物料类型种子数据
             modelBuilder.Entity<Domain.Models.MaterialType>().HasData(MaterialTypeList.Data());
+            //货币种子数据
+            modelBuilder.Entity<Domain.Models.Currency>().HasData(CurrencyList.Data());
 
-     
         }
 
 
