@@ -17,6 +17,7 @@ function toggleSidebar() {
       </div>
       <ul>
         <li><RouterLink to="/">Dashboard</RouterLink></li>
+        <li><RouterLink to="/order/list">OrderList</RouterLink></li>
         <li><RouterLink to="/profile">Profile</RouterLink></li>
         <li><RouterLink to="/settings">Settings</RouterLink></li>
       </ul>
@@ -39,7 +40,7 @@ function toggleSidebar() {
       </main>
 
       <footer>
-        <p>&copy; 2023 Your Company. All rights reserved.</p>
+        <p>&copy; 2025 SCERP. All rights reserved.</p>
       </footer>
     </div>
   </div>
@@ -67,8 +68,8 @@ function toggleSidebar() {
 }
 
 .logo {
-  height: 80px; /* Match the height of the header */
-      padding: 1rem;
+  height: 60px; /* Match the height of the header */
+      padding: 0.5rem;
       text-align:center;
           border-bottom: 1px solid #ddd;
 }
@@ -90,6 +91,7 @@ function toggleSidebar() {
 .sidebar a {
   text-decoration: none;
   color: #333;
+  display:block;
 }
 
 .sidebar a.router-link-exact-active {
@@ -107,10 +109,10 @@ function toggleSidebar() {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem;
+  padding: 0.5rem;
   background-color: #f5f5f5;
   border-bottom: 1px solid #ddd;
-  height: 80px; /* Set a fixed height for the header */
+  height: 60px; /* Set a fixed height for the header */
 }
 
 .toggle-button {
@@ -145,7 +147,7 @@ nav a.router-link-exact-active {
 
 footer {
   text-align: center;
-  padding: 1rem;
+  padding: 0.5rem;
   background-color: #f5f5f5;
   border-top: 1px solid #ddd;
 }
