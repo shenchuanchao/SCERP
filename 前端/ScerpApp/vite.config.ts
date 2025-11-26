@@ -5,6 +5,8 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import vueDevTools from 'vite-plugin-vue-devtools'
+import AutoImport from 'unplugin-auto-import/vite' // 引入 auto-import
+import Components from 'unplugin-vue-components/vite' // 引入 vue-components
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -77,6 +79,16 @@ export default defineConfig({
       devOptions: {
         enabled: true
       }
+    }),
+    // 配置 unplugin-auto-import
+    AutoImport({
+      imports: ['vue', 'vue-router', 'pinia'], // 自动导入 vue, vue-router, pinia 的相关函数
+      dts: './auto-imports.d.ts', // 生成类型声明文件
+    }),
+     // 配置 unplugin-vue-components
+    Components({
+      dirs: ['src/components'], // 指定自动扫描的组件目录
+      dts: true, // 生成类型声明文件
     }),
   ],
   resolve: {

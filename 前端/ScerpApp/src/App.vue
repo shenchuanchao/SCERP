@@ -2,49 +2,88 @@
 import { ref } from 'vue';
 import { RouterLink, RouterView } from 'vue-router';
 
-const isSidebarVisible = ref(true);
+const isCollapse = ref(false);
 
 function toggleSidebar() {
-  isSidebarVisible.value = !isSidebarVisible.value;
+  isCollapse.value = !isCollapse.value;
 }
 </script>
 
 <template>
   <div class="layout">
-    <aside class="sidebar" :class="{ hidden: !isSidebarVisible }">
-    <div class="logo">
-      <img alt="Vue logo" src="@/assets/logo.svg" width="125" height="125" />
-      </div>
-      <ul>
-        <li><RouterLink to="/">Dashboard</RouterLink></li>
-        <li><RouterLink to="/order/list">OrderList</RouterLink></li>
-        <li><RouterLink to="/profile">Profile</RouterLink></li>
-        <li><RouterLink to="/settings">Settings</RouterLink></li>
-      </ul>
-    </aside>
-
-    <div class="right-panel">
-      <header class="header">
-        <button class="toggle-button" @click="toggleSidebar">
-          {{ isSidebarVisible ? 'Hide Menu' : 'Show Menu' }}
-        </button>
+    <el-container>    
+      <el-aside class="sidebar" >
+        
+        <el-menu
+          default-active="2"
+          class="el-menu-vertical-demo"
+          :collapse="isCollapse"
+        >
+        <el-menu-item index="0">
+          <img alt="Vue logo" src="@/assets/logo.svg" style="max-height:100%;max-width:100%;" />
+        </el-menu-item>
+        <el-menu-item index="1">
+            <RouterLink to="/">
+              <el-icon><el-icon><HomeFilled /></el-icon></el-icon>
+              Dashboard
+            </RouterLink>            
+        </el-menu-item>
+        <el-sub-menu index="2">
+            <template #title>
+              <el-icon><el-icon><Goods /></el-icon></el-icon>
+              <span>销售管理</span>
+            </template>
+              <el-menu-item index="1-1">
+              <RouterLink to="/order/list">订单列表</RouterLink>
+              </el-menu-item>        
+          </el-sub-menu>
+          <el-sub-menu index="3">
+            <template #title>
+              <el-icon><Setting /></el-icon>
+              <span>系统管理</span>
+            </template>
+              <el-menu-item index="2-1">
+              <RouterLink to="/login">Login</RouterLink>
+              </el-menu-item>
+              <el-menu-item index="2-2">
+              <RouterLink to="/register">Register</RouterLink>
+              </el-menu-item>       
+          </el-sub-menu>
+         
+          
+        </el-menu>
+      </el-aside>
+      <el-container>
+        <el-header class="header">
+        <div>
+         <el-radio-group v-model="isCollapse">
+          <el-radio-button :value="true" v-show="!isCollapse"><el-icon color="#007bff"  ><Fold /></el-icon></el-radio-button>
+          <el-radio-button :value="false" v-show="isCollapse"><el-icon color="#007bff"  ><Expand /></el-icon></el-radio-button>
+        </el-radio-group>
+        
+        
+        </div>
+       
         <nav>
           <RouterLink to="/">Home</RouterLink>
           <RouterLink to="/about">About</RouterLink>
           <RouterLink to="/login">Login</RouterLink>
+          <RouterLink to="/register">Register</RouterLink>
         </nav>
-      </header>
-
-      <main class="main-content">
+        </el-header>
+        <el-main>
         <RouterView />
-      </main>
-
-      <footer>
+        </el-main>
+        <el-footer>
         <p>&copy; 2025 SCERP. All rights reserved.</p>
-      </footer>
-    </div>
+        </el-footer>
+      </el-container>
+    </el-container>
   </div>
+  
 </template>
+
+
 
 <style scoped>
 .layout {
@@ -52,51 +91,12 @@ function toggleSidebar() {
   height: 100vh;
 }
 
-.sidebar {
+.el-menu-vertical-demo{
+ height: 100vh;
+}
+.el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 200px;
-  background-color: #f0f0f0;
-  border-right: 1px solid #ddd;
-  display: flex;
-  flex-direction: column;
-  transition: width 0.3s ease;
-}
-
-.sidebar.hidden {
-  width: 0;
-  padding: 0;
-  overflow: hidden;
-}
-
-.logo {
-  height: 60px; /* Match the height of the header */
-      padding: 0.5rem;
-      text-align:center;
-          border-bottom: 1px solid #ddd;
-}
-.logo img{
-  max-height:100%;
-  max-width:100%;
-}
-
-.sidebar ul {
-  list-style: none;
-  padding: 1rem;
-  width: 100%;
-}
-
-.sidebar li {
-  margin-bottom: 1rem;
-}
-
-.sidebar a {
-  text-decoration: none;
-  color: #333;
-  display:block;
-}
-
-.sidebar a.router-link-exact-active {
-  font-weight: bold;
-  color: #007bff;
+ 
 }
 
 .right-panel {
@@ -107,26 +107,12 @@ function toggleSidebar() {
 
 .header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.5rem;
-  background-color: #f5f5f5;
-  border-bottom: 1px solid #ddd;
-  height: 60px; /* Set a fixed height for the header */
+    align-items: center;
+    justify-content: space-between;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #ddd;
 }
 
-.toggle-button {
-  padding: 0.5rem 1rem;
-  border: none;
-  background-color: #007bff;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.toggle-button:hover {
-  background-color: #0056b3;
-}
 
 nav a {
   margin: 0 1rem;
@@ -134,10 +120,7 @@ nav a {
   color: #333;
 }
 
-nav a.router-link-exact-active {
-  font-weight: bold;
-  color: #007bff;
-}
+
 
 .main-content {
   flex: 1;

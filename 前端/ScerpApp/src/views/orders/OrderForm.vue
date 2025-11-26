@@ -1,150 +1,85 @@
 <template>
-  <div class="order-form">
-    <h1>{{ isEditMode ? 'Edit Order' : 'New Order' }}</h1>
-    <form @submit.prevent="saveOrder">
-      <div class="form-group">
-        <label for="customerName">Customer Name:</label>
-        <input
-          type="text"
-          id="customerName"
-          v-model="order.customerName"
-          required
-        />
-      </div>
-      <div class="form-group">
-        <label for="orderDate">Order Date:</label>
-        <input
+  <el-form :model="form" label-width="auto" style="max-width: 600px">
+    <el-form-item label="Activity name">
+      <el-input v-model="form.name" />
+    </el-form-item>
+    <el-form-item label="Activity zone">
+      <el-select v-model="form.region" placeholder="please select your zone">
+        <el-option label="Zone one" value="shanghai" />
+        <el-option label="Zone two" value="beijing" />
+      </el-select>
+    </el-form-item>
+    <el-form-item label="Activity time">
+      <el-col :span="11">
+        <el-date-picker
+          v-model="form.date1"
           type="date"
-          id="orderDate"
-          v-model="order.orderDate"
-          required
+          placeholder="Pick a date"
+          style="width: 100%"
         />
-      </div>
-      <div class="form-group">
-        <label for="status">Status:</label>
-        <select id="status" v-model="order.status" required>
-          <option value="Pending">Pending</option>
-          <option value="Completed">Completed</option>
-          <option value="Cancelled">Cancelled</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="total">Total:</label>
-        <input
-          type="number"
-          id="total"
-          v-model="order.total"
-          required
-          min="0"
-          step="0.01"
+      </el-col>
+      <el-col :span="2" class="text-center">
+        <span class="text-gray-500">-</span>
+      </el-col>
+      <el-col :span="11">
+        <el-time-picker
+          v-model="form.date2"
+          placeholder="Pick a time"
+          style="width: 100%"
         />
-      </div>
-      <div class="form-actions">
-        <button type="submit" class="save-button">Save</button>
-        <button type="button" class="cancel-button" @click="closeForm">Cancel</button>
-      </div>
-    </form>
-  </div>
+      </el-col>
+    </el-form-item>
+    <el-form-item label="Instant delivery">
+      <el-switch v-model="form.delivery" />
+    </el-form-item>
+    <el-form-item label="Activity type">
+      <el-checkbox-group v-model="form.type">
+        <el-checkbox value="Online activities" name="type">
+          Online activities
+        </el-checkbox>
+        <el-checkbox value="Promotion activities" name="type">
+          Promotion activities
+        </el-checkbox>
+        <el-checkbox value="Offline activities" name="type">
+          Offline activities
+        </el-checkbox>
+        <el-checkbox value="Simple brand exposure" name="type">
+          Simple brand exposure
+        </el-checkbox>
+      </el-checkbox-group>
+    </el-form-item>
+    <el-form-item label="Resources">
+      <el-radio-group v-model="form.resource">
+        <el-radio value="Sponsor">Sponsor</el-radio>
+        <el-radio value="Venue">Venue</el-radio>
+      </el-radio-group>
+    </el-form-item>
+    <el-form-item label="Activity form">
+      <el-input v-model="form.desc" type="textarea" />
+    </el-form-item>
+    <el-form-item>
+      <el-button type="primary" @click="onSubmit">Create</el-button>
+      <el-button>Cancel</el-button>
+    </el-form-item>
+  </el-form>
 </template>
 
-<script setup lang="ts">
-import { ref, defineEmits, defineProps, watch } from 'vue';
+<script lang="ts" setup>
+import { reactive } from 'vue'
 
-const emit = defineEmits(['close', 'save']);
-const props = defineProps({
-  orderData: {
-    type: Object,
-    default: () => ({
-      customerName: '',
-      orderDate: '',
-      status: 'Pending',
-      total: 0,
-    }),
-  },
-});
+// do not use same name with ref
+const form = reactive({
+  name: '',
+  region: '',
+  date1: '',
+  date2: '',
+  delivery: false,
+  type: [],
+  resource: '',
+  desc: '',
+})
 
-const order = ref({ ...props.orderData });
-const isEditMode = ref(false);
-
-watch(
-  () => props.orderData,
-  (newOrder) => {
-    order.value = { ...newOrder };
-    isEditMode.value = !!newOrder; // Check if editing an existing order
-  },
-  { immediate: true }
-);
-
-function saveOrder() {
-  emit('save', { ...order.value });
-  emit('close');
-}
-
-function closeForm() {
-  emit('close');
+const onSubmit = () => {
+  console.log('submit!')
 }
 </script>
-
-<style scoped>
-.order-form {
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-}
-
-h1 {
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
-.form-group {
-  margin-bottom: 1rem;
-}
-
-label {
-  display: block;
-  margin-bottom: 0.5rem;
-}
-
-input,
-select {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: space-between;
-}
-
-button {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.save-button {
-  background-color: #007bff;
-  color: white;
-}
-
-.save-button:hover {
-  background-color: #0056b3;
-}
-
-.cancel-button {
-  background-color: #dc3545;
-  color: white;
-}
-
-.cancel-button:hover {
-  background-color: #c82333;
-}
-</style>

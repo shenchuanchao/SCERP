@@ -1,9 +1,9 @@
 <template>
   <div class="order-list">
     <div class="top-bar">
-    <div class="button-list">
-      <button class="new-order-button" @click="addOrder">New Order</button>
-      <button class="refresh-button" @click="refreshOrders">Refresh</button>
+      <div class="button-list">
+        <button class="new-order-button" @click="addOrder">New Order</button>
+        <button class="refresh-button" @click="refreshOrders">Refresh</button>
       </div>
       <div class="search-bar">
         <input
@@ -15,61 +15,59 @@
         <button class="search-button" @click="onSearchClick">Search</button>
       </div>
     </div>
-    <table class="order-table">
-      <thead>
-        <tr>
-          <th>Order ID</th>
-          <th>Customer Name</th>
-          <th>Order Date</th>
-          <th>Status</th>
-          <th>Total</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="order in paginatedOrders" :key="order.id">
-          <td>{{ order.id }}</td>
-          <td>{{ order.customerName }}</td>
-          <td>{{ order.orderDate }}</td>
-          <td>{{ order.status }}</td>
-          <td>{{ order.total }}</td>
-          <td>
-            <button class="edit-button" @click="editOrder(order.id)">Edit</button>
-            <button class="delete-button" @click="confirmDelete(order.id)">Delete</button>
-          </td>
-        </tr>
-        <tr v-if="!paginatedOrders.length">
-          <td colspan="6">No orders found.</td>
-        </tr>
-      </tbody>
-    </table>
+    <el-table :data="paginatedOrders" border height="350" style="width: 100%"
+    highlight-current-row>
+      <el-table-column prop="id" label="Id" width="180" />
+      <el-table-column prop="customerName" label="customerName" width="180" />
+      <el-table-column prop="orderDate" label="orderDate" sortable  />
+      <el-table-column prop="status" label="status" />
+      <el-table-column prop="total" label="total" sortable  />
+      <el-table-column fixed="right" label="Operations" min-width="120">
+        <template #default="scope">
+          <el-button size="small" @click="handleEdit(scope.$index, scope.row)">
+            Edit
+          </el-button>
+          <el-button
+            size="small"
+            type="danger"
+            @click="confirmDelete(scope.row)"
+          >
+            Delete
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
     <div class="pagination">
       <button :disabled="currentPage === 1" @click="currentPage--">Previous</button>
       <span>Page {{ currentPage }} of {{ totalPages }}</span>
       <button :disabled="currentPage === totalPages" @click="currentPage++">Next</button>
     </div>
 
-    <!-- Order Form Modal -->
-    <div v-if="showOrderForm" class="modal" @click.self="closeOrderForm">
-      <div class="modal-content">
-        <OrderForm
-          :orderData="selectedOrder"
-          @save="handleSaveOrder"
-          @close="closeOrderForm"
-        />
-      </div>
-    </div>
+    <!-- 订单表单组件 -->
+      <order-form
+        :visible.sync="false"
+        :edit-data="currentEditData"
+        :is-edit="isEditMode"
+        @success="handleFormSuccess"
+        @close="handleFormClose">
+      </order-form>
 
-    <!-- Delete Confirmation Modal -->
-    <div v-if="showDeleteConfirm" class="modal" @click.self="closeDeleteConfirm">
-      <div class="modal-content">
-        <p>Are you sure you want to delete this order?</p>
-        <div class="modal-actions">
-          <button class="confirm-button" @click="deleteOrder(confirmedOrderId)">Yes</button>
-          <button class="cancel-button" @click="closeDeleteConfirm">No</button>
+    <!-- Delete Confirmation Dialog -->
+    <el-dialog
+      v-model="showDeleteConfirm"
+      title="删除提示"
+      width="500"
+      transition="dialog-bounce"
+      draggable
+    >
+      <span>您确认要删除此订单？</span>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="closeDeleteConfirm">取消</el-button>
+          <el-button type="primary" @click="deleteOrder">确认删除</el-button>
         </div>
-      </div>
-    </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -81,15 +79,24 @@ const orders = ref([
   { id: 1, customerName: 'John Doe', orderDate: '2023-10-01', status: 'Pending', total: 100 },
   { id: 2, customerName: 'Jane Smith', orderDate: '2023-10-02', status: 'Completed', total: 200 },
   { id: 3, customerName: 'Alice Johnson', orderDate: '2023-10-03', status: 'Cancelled', total: 150 },
+  { id: 4, customerName: 'Alice Johnson', orderDate: '2023-10-03', status: 'Cancelled', total: 150 },
+  { id: 5, customerName: 'Alice Johnson', orderDate: '2023-10-03', status: 'Cancelled', total: 150 },
+  { id: 6, customerName: 'Alice Johnson', orderDate: '2023-10-03', status: 'Cancelled', total: 150 },
+  { id: 7, customerName: 'Alice Johnson', orderDate: '2023-10-03', status: 'Cancelled', total: 150 },
+  { id: 8, customerName: 'Alice Johnson', orderDate: '2023-10-03', status: 'Cancelled', total: 150 },
+  { id: 9, customerName: 'Alice Johnson', orderDate: '2023-10-03', status: 'Cancelled', total: 150 },
+  { id: 10, customerName: 'Alice Johnson', orderDate: '2023-10-03', status: 'Cancelled', total: 150 },
+  { id: 11, customerName: 'Alice Johnson', orderDate: '2023-10-03', status: 'Cancelled', total: 150 },
 ]);
 
 const searchQuery = ref('');
 const currentPage = ref(1);
-const itemsPerPage = 5;
+const itemsPerPage = 10;
 const showOrderForm = ref(false);
 const selectedOrder = ref(null);
+const isEditMode= ref(false);
 const showDeleteConfirm = ref(false);
-const confirmedOrderId = ref<number | null>(null);
+const confirmedOrder = ref(null);
 
 const filteredOrders = computed(() => {
   if (!searchQuery.value) return orders.value;
@@ -116,32 +123,35 @@ function onSearchClick() {
 }
 
 function addOrder() {
-    console.log("click add");
-  selectedOrder.value = null; // Clear selected order for new entry
-  showOrderForm.value = true;
+   isEditMode = false;
+      selectedOrder = null;
+      showOrderForm = true;
+
 }
 
-function editOrder(orderId: number) {
-  const order = orders.value.find((o) => o.id === orderId);
+function handleEdit(index: number, row: any) {
+  const order = orders.value.find((o) => o.id === row.id);
   if (order) {
     selectedOrder.value = { ...order }; // Pass a copy of the order to edit
     showOrderForm.value = true;
   }
 }
 
-function confirmDelete(orderId: number) {
-  confirmedOrderId.value = orderId;
+function confirmDelete(order: any) {
+  confirmedOrder.value = order;
   showDeleteConfirm.value = true;
 }
 
 function closeDeleteConfirm() {
   showDeleteConfirm.value = false;
-  confirmedOrderId.value = null;
+  confirmedOrder.value = null;
 }
 
-function deleteOrder(orderId: number) {
-  orders.value = orders.value.filter((o) => o.id !== orderId);
-  closeDeleteConfirm();
+function deleteOrder() {
+  if (confirmedOrder.value) {
+    orders.value = orders.value.filter((o) => o.id !== confirmedOrder.value.id);
+    closeDeleteConfirm();
+  }
 }
 
 function handleSaveOrder(order: any) {
@@ -234,50 +244,6 @@ function refreshOrders() {
   background-color: #0056b3;
 }
 
-.order-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 1rem;
-}
-
-.order-table th,
-.order-table td {
-  border: 1px solid #ddd;
-  padding: 0.75rem;
-  text-align: left;
-}
-
-.order-table th {
-  background-color: #f5f5f5;
-}
-
-.edit-button,
-.delete-button {
-  padding: 0.25rem 0.5rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.edit-button {
-  background-color: #007bff;
-  color: white;
-  margin-right: 0.5rem;
-}
-
-.edit-button:hover {
-  background-color: #0056b3;
-}
-
-.delete-button {
-  background-color: #dc3545;
-  color: white;
-}
-
-.delete-button:hover {
-  background-color: #c82333;
-}
-
 .pagination {
   display: flex;
   justify-content: space-between;
@@ -319,36 +285,21 @@ function refreshOrders() {
   text-align: center;
 }
 
-.modal-actions {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 1rem;
+.dialog-bounce-enter-active,
+.dialog-bounce-leave-active,
+.dialog-bounce-enter-active .el-dialog,
+.dialog-bounce-leave-active .el-dialog {
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.confirm-button {
-  padding: 0.5rem 1rem;
-  border: none;
-  background-color: #dc3545;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
+.dialog-bounce-enter-from,
+.dialog-bounce-leave-to {
+  opacity: 0;
 }
 
-.confirm-button:hover {
-  background-color: #c82333;
-}
-
-.cancel-button {
-  padding: 0.5rem 1rem;
-  border: none;
-  background-color: #6c757d;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.cancel-button:hover {
-  background-color: #5a6268;
+.dialog-bounce-enter-from .el-dialog,
+.dialog-bounce-leave-to .el-dialog {
+  transform: scale(0.3) translateY(-50px);
+  opacity: 0;
 }
 </style>

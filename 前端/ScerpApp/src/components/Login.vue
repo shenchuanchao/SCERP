@@ -1,98 +1,79 @@
 <template>
   <div class="login-container">
-    <h1>Login</h1>
-    <form @submit.prevent="handleLogin">
-      <div class="form-group">
-        <label for="email">Email:</label>
-        <input type="email" id="email" v-model="email" required />
-      </div>
-      <div class="form-group">
-        <label for="password">Password:</label>
-        <input type="password" id="password" v-model="password" required />
-      </div>
-      <div class="form-group">
-        <label>
-          <input type="checkbox" v-model="rememberMe" />
-          Remember Me
-        </label>
-      </div>
-      <div class="form-actions">
-        <button type="submit">Login</button>
-        <button type="button" @click="goToRegister">Register</button>
-      </div>
-    </form>
+    <el-card class="login-card">
+      <h2 class="login-title">用户登录</h2>
+      <el-form :model="loginForm" :rules="loginRules" ref="loginFormRef" label-width="80px">
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="loginForm.username" placeholder="请输入用户名" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input
+            v-model="loginForm.password"
+            placeholder="请输入密码"
+            type="password"
+            show-password
+          ></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="handleLogin">登录</el-button>
+          <el-button @click="resetForm">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </el-card>
   </div>
 </template>
 
-<script>
-export default {
-  name: "Login",
-  data() {
-    return {
-      email: "",
-      password: "",
-      rememberMe: false,
-    };
-  },
-  methods: {
-    handleLogin() {
-      // Handle login logic here
-      console.log("Email:", this.email);
-      console.log("Password:", this.password);
-      console.log("Remember Me:", this.rememberMe);
-    },
-    goToRegister() {
-      // Navigate to the registration page
-      this.$router.push({ name: "Register" });
-    },
-  },
+<script setup>
+import { ref, reactive } from 'vue';
+import { ElMessage } from 'element-plus';
+
+const loginForm = reactive({
+  username: '',
+  password: '',
+});
+
+const loginRules = reactive({
+  username: [
+    { required: true, message: '请输入用户名', trigger: 'blur' },
+    { min: 3, message: '用户名长度至少为3位', trigger: 'blur' },
+  ],
+  password: [
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    { min: 6, message: '密码长度至少为6位', trigger: 'blur' },
+  ],
+});
+
+const loginFormRef = ref(null);
+
+const handleLogin = async () => {
+  if (!loginFormRef.value.validate()) {
+    return;
+  }
+  // 这里可以添加实际的登录逻辑，比如发送axios请求到后端验证用户名和密码
+  // 暂时模拟登录成功提示
+  ElMessage.success('登录成功');
+};
+
+const resetForm = () => {
+  loginFormRef.value.resetFields();
 };
 </script>
 
 <style scoped>
 .login-container {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-}
-h1 {
-  text-align: center;
-}
-.form-group {
-  margin-bottom: 15px;
-}
-label {
-  display: block;
-  margin-bottom: 5px;
-}
-input[type="email"],
-input[type="password"] {
-  width: 100%;
-  padding: 8px;
-  box-sizing: border-box;
-}
-.form-actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - var(--el-main-padding) * 2 - 120px);
+  background-color: #f4f4f4;
 }
-button {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+
+.login-card {
+  width: 360px;
 }
-button[type="submit"] {
-  background-color: #007bff;
-  color: white;
-}
-button[type="button"] {
-  background-color: #6c757d;
-  color: white;
-}
-button:hover {
-  opacity: 0.9;
+
+.login-title {
+  text-align: center;
+  margin-bottom: 20px;
 }
 </style>
